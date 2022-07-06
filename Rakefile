@@ -77,7 +77,7 @@ namespace :keys do
         name_prefix: 'gpg',
         owner_name: 'InfraBlocks Maintainers',
         owner_email: 'maintainers@infrablocks.io',
-        owner_comment: 'terraform-vault-approle CI Key'
+        owner_comment: 'terraform-google-project-hierarchy CI Key'
       )
     end
 
@@ -107,7 +107,7 @@ end
 
 RakeCircleCI.define_project_tasks(
   namespace: :circle_ci,
-  project_slug: 'github/infrablocks/terraform-vault-approle'
+  project_slug: 'github/infrablocks/terraform-google-project-hierarchy'
 ) do |t|
   circle_ci_config =
     YAML.load_file('config/secrets/circle_ci/config.yaml')
@@ -133,7 +133,7 @@ end
 
 RakeGithub.define_repository_tasks(
   namespace: :github,
-  repository: 'infrablocks/terraform-vault-approle'
+  repository: 'infrablocks/terraform-google-project-hierarchy'
 ) do |t, args|
   github_config =
     YAML.load_file('config/secrets/github/config.yaml')
@@ -170,62 +170,14 @@ namespace :test do
     task fix: [:'rubocop:autocorrect']
   end
 
-  namespace :rspec do
-    RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
-      plugin_cache_directory =
-        "#{Paths.project_root_directory}/vendor/terraform/plugins"
+  RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
+    plugin_cache_directory =
+      "#{Paths.project_root_directory}/vendor/terraform/plugins"
 
-      mkdir_p(plugin_cache_directory)
+    mkdir_p(plugin_cache_directory)
 
-      ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
-      ENV['AWS_REGION'] = configuration.region
-    end
-  end
-
-  desc 'Run integration tests'
-  task :integration do
-    Rake::Task['dependencies:test:provision'].invoke unless ENV['CI'] == 'true'
-    Rake::Task['test:rspec:integration'].invoke
-    unless ENV['CI'] == 'true' || ENV.key?('DEPLOYMENT_IDENTIFIER')
-      Rake::Task['dependencies:test:destroy'].invoke
-    end
-  end
-end
-
-namespace :dependencies do
-  namespace :test do
-    desc 'Provision spec dependencies'
-    task :provision do
-      project_name = 'vault_test'
-      compose_file = 'spec/dependencies.yml'
-
-      project_name_switch = "--project-name #{project_name}"
-      compose_file_switch = "--file #{compose_file}"
-      detach_switch = '--detach'
-      remove_orphans_switch = '--remove-orphans'
-
-      command_switches = "#{compose_file_switch} #{project_name_switch}"
-      subcommand_switches = "#{detach_switch} #{remove_orphans_switch}"
-
-      sh({
-           'TMPDIR' => tmpdir
-         }, "docker-compose #{command_switches} up #{subcommand_switches}")
-    end
-
-    desc 'Destroy spec dependencies'
-    task :destroy do
-      project_name = 'vault_test'
-      compose_file = 'spec/dependencies.yml'
-
-      project_name_switch = "--project-name #{project_name}"
-      compose_file_switch = "--file #{compose_file}"
-
-      command_switches = "#{compose_file_switch} #{project_name_switch}"
-
-      sh({
-           'TMPDIR' => tmpdir
-         }, "docker-compose #{command_switches} down")
-    end
+    ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
+    ENV['AWS_REGION'] = configuration.region
   end
 end
 
