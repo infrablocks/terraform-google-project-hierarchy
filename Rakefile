@@ -7,7 +7,6 @@ require 'rake_github'
 require 'rake_gpg'
 require 'rake_ssh'
 require 'rake_terraform'
-require 'rake_vault'
 require 'rspec/core/rake_task'
 require 'rubocop/rake_task'
 require 'securerandom'
@@ -42,10 +41,6 @@ task default: %i[
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
   version: '1.0.11'
-)
-RakeVault.define_installation_tasks(
-  path: File.join(Dir.pwd, 'vendor', 'vault'),
-  version: '1.10.4'
 )
 
 namespace :encryption do
