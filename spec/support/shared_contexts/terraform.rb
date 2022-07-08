@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
+require 'google/cloud/resource_manager'
 require 'ostruct'
-
 require_relative '../terraform_module'
 
 module RSpec
@@ -38,5 +38,9 @@ end
 # rubocop:disable RSpec/ContextWording
 shared_context 'terraform' do
   include RSpec::Terraform
+
+  let(:resource_manager) do
+    Google::Cloud::ResourceManager.new
+  end
 end
 # rubocop:enable RSpec/ContextWording

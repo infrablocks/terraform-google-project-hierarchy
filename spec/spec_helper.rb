@@ -30,8 +30,12 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     TerraformModule.provision(:prerequisites)
+    TerraformModule.provision(:project_hierarchy)
   end
+
   config.after(:suite) do
+    TerraformModule.destroy(:project_hierarchy)
+  ensure
     TerraformModule.destroy(:prerequisites)
   end
 end

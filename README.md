@@ -118,13 +118,13 @@ To provision the module prerequisites:
 To provision the module contents:
 
 ```bash
-./go deployment:root:provision[<deployment_identifier>]
+./go deployment:project_hierarchy:provision[<deployment_identifier>]
 ```
 
 To destroy the module contents:
 
 ```bash
-./go deployment:root:destroy[<deployment_identifier>]
+./go deployment:project_hierarchy:destroy[<deployment_identifier>]
 ```
 
 To destroy the module prerequisites:

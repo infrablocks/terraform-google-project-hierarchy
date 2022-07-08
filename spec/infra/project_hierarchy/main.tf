@@ -12,4 +12,5 @@ module "project_hierarchy" {
 
   component             = var.component
   deployment_identifier = var.deployment_identifier
+  folder_id             = var.folder_id
 }

@@ -171,6 +171,8 @@ namespace :test do
   end
 
   RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
+    test_configuration = configuration.for(:project_hierarchy)
+
     plugin_cache_directory =
       "#{Paths.project_root_directory}/vendor/terraform/plugins"
 
@@ -178,6 +180,9 @@ namespace :test do
 
     ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
     ENV['AWS_REGION'] = configuration.region
+    ENV['RESOURCE_MANAGER_PROJECT'] = test_configuration.gcp_project_id
+    ENV['RESOURCE_MANAGER_CREDENTIALS'] = test_configuration.gcp_credentials
+    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = test_configuration.gcp_credentials
   end
 end
 
@@ -198,23 +203,26 @@ namespace :deployment do
     end
   end
 
-  namespace :root do
+  namespace :project_hierarchy do
     RakeTerraform.define_command_tasks(
-      configuration_name: 'root',
+      configuration_name: 'project_hierarchy',
       argument_names: [:deployment_identifier]
     ) do |t, args|
       deployment_configuration =
-        configuration
-        .for(:root, args.to_h)
+        configuration.for(:project_hierarchy, args.to_h)
 
       state_file = deployment_configuration.state_file
       vars = deployment_configuration
              .vars.to_h
-             .merge(include_default_stage_domain_name: 'false')
+
+      environment = {
+        'GOOGLE_APPLICATION_CREDENTIALS' =>
+          deployment_configuration.gcp_credentials
+      }
 
       t.source_directory = deployment_configuration.source_directory
       t.work_directory = deployment_configuration.work_directory
-
+      t.environment =  environment
       t.state_file = state_file
       t.vars = vars
     end

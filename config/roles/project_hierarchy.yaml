@@ -1,0 +1,14 @@
+---
+source_directory: "spec/infra/project_hierarchy"
+state_file: "%{hiera('project_directory')}/state/project_hierarchy.tfstate"
+
+gcp_credentials: "%{hiera('project_directory')}/config/secrets/gcp/infrablocks-testing-bootstrap.json"
+gcp_project_id: "infrablocks-testing"
+gcp_folder_id: "274171096401"
+
+vars:
+  region: "%{hiera('region')}"
+
+  component: "%{hiera('component')}"
+  deployment_identifier: "%{hiera('deployment_identifier')}"
+  folder_id: "%{hiera('gcp_folder_id')}"
