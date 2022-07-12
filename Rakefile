@@ -179,7 +179,6 @@ namespace :test do
     mkdir_p(plugin_cache_directory)
 
     ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
-    ENV['AWS_REGION'] = configuration.region
     ENV['RESOURCE_MANAGER_PROJECT'] = test_configuration.gcp_project_id
     ENV['RESOURCE_MANAGER_CREDENTIALS'] = test_configuration.gcp_credentials
     ENV['GOOGLE_APPLICATION_CREDENTIALS'] = test_configuration.gcp_credentials

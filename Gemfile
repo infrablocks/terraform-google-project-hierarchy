@@ -2,7 +2,6 @@
 
 source 'https://rubygems.org'
 
-gem 'awspec'
 gem 'confidante'
 gem 'git'
 gem 'google-cloud-resource_manager', '~> 0.37.0'
@@ -21,4 +20,5 @@ gem 'rubocop-rake'
 gem 'rubocop-rspec'
 gem 'rubyzip'
 gem 'semantic'
-gem 'vault'
+
+gem "google-cloud-resource_manager-v3", "~> 0.3.0"
