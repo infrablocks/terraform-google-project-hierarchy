@@ -8,7 +8,6 @@ gcp_folder_id: "274171096401"
 
 vars:
   region: "%{hiera('region')}"
-
   component: "%{hiera('component')}"
   deployment_identifier: "%{hiera('deployment_identifier')}"
   folder_id: "%{hiera('gcp_folder_id')}"

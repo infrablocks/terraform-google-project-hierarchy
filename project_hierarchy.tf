@@ -7,3 +7,7 @@ resource "google_project" "root" {
   project_id = local.root_project_id
   folder_id  = var.folder_id
 }
+resource "google_folder" "management_folder" {
+  display_name = "management"
+  parent = "folders/${var.folder_id}"
+}

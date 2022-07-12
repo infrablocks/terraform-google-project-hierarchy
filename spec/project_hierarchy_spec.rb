@@ -16,15 +16,25 @@ describe 'project hierarchy' do
       expect(found_project).to be_truthy
     end
 
-    it 'creates a management sub-folder' do
+    it 'outputs the management_folder_id' do
+      management_folder_id = output(:project_hierarchy, 'management_folder_id')
 
+      expect(management_folder_id).to be_truthy
+    end
+
+    it 'creates the management folder' do
+      # parent_folder_id = vars(:project_hierarchy).folder_id
+      management_folder_id = output(:project_hierarchy, 'management_folder_id')
 
       client = Google::Cloud::ResourceManager::V3::Folders::Client.new do |config|
-        config.credentials = "/Users/jonassvalin/Documents/git/atomic/terraform-google-project-hierarchy/config/secrets/gcp/infrablocks-testing-bootstrap.json"
+        config.endpoint = 'cloudresourcemanager.googleapis.com'
       end
-      request = Google::Cloud::ResourceManager::V3::GetFolderRequest.new
-      response = client.get_folder request
-      expect(response).to be_truthy
+
+      expect {
+        request = Google::Cloud::ResourceManager::V3::GetFolderRequest.new
+        request.name = "folders/#{management_folder_id}"
+        client.get_folder request
+      }.not_to(raise_error)
     end
   end
 end
