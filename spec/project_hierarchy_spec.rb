@@ -23,18 +23,24 @@ describe 'project hierarchy' do
     end
 
     it 'creates the management folder' do
-      # parent_folder_id = vars(:project_hierarchy).folder_id
+      parent_folder_id = vars(:project_hierarchy).folder_id
       management_folder_id = output(:project_hierarchy, 'management_folder_id')
 
       client = Google::Cloud::ResourceManager::V3::Folders::Client.new do |config|
         config.endpoint = 'cloudresourcemanager.googleapis.com'
       end
 
+      folder = nil
+
       expect {
         request = Google::Cloud::ResourceManager::V3::GetFolderRequest.new
         request.name = "folders/#{management_folder_id}"
-        client.get_folder request
+        folder = client.get_folder(request)
       }.not_to(raise_error)
+
+      expect(folder.parent).to eq('folders/' + parent_folder_id)
+      expect(folder.display_name).to eq('management')
+
     end
   end
 end
