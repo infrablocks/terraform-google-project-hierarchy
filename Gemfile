@@ -21,4 +21,4 @@ gem 'rubocop-rspec'
 gem 'rubyzip'
 gem 'semantic'
 
-gem "google-cloud-resource_manager-v3", "~> 0.3.0"
+gem 'google-cloud-resource_manager-v3', '~> 0.3.0'
