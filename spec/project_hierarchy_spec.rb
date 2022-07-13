@@ -9,9 +9,13 @@ describe 'project hierarchy' do
       vars(:project_hierarchy).deployment_identifier
     end
 
+    let(:component) do
+      vars(:project_hierarchy).component
+    end
+
     it 'creates a root project' do
       found_project = resource_manager.projects.find do |i|
-        i.project_id == "infrablocks-test-#{deployment_identifier}-root"
+        i.project_id == "#{component}-#{deployment_identifier}-root"
       end
       expect(found_project).to be_truthy
     end
@@ -42,5 +46,19 @@ describe 'project hierarchy' do
       expect(folder.display_name).to eq('management')
 
     end
+
+    it 'creates a management project' do
+      found_project = resource_manager.projects.find do |i|
+        i.project_id == "#{component}-#{deployment_identifier}-management"
+      end
+      expect(found_project).to be_truthy
+    end
+
+    it 'outputs the management_project_id' do
+      management_project_id = output(:project_hierarchy, 'management_project_id')
+
+      expect(management_project_id).to be_truthy
+    end
+
   end
 end
