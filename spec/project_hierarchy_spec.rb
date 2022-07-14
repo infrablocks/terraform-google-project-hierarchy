@@ -71,7 +71,7 @@ describe 'project hierarchy' do
 
     it 'creates a management project' do
       found_project = resource_manager.projects.find do |i|
-        i.project_id == "#{component}-#{deployment_identifier}-management"
+        i.project_id == "#{component}-#{deployment_identifier}-mgmt"
       end
       expect(found_project).to be_truthy
     end
