@@ -24,7 +24,7 @@ resource "google_project" "management" {
 }
 
 resource "google_project_service" "root_iam" {
-  project = local.root_project_id
+  project = google_project.root.project_id
   service = "iam.googleapis.com"
 
   disable_dependent_services = true
@@ -33,5 +33,9 @@ resource "google_project_service" "root_iam" {
 resource "google_service_account" "service_account" {
   account_id   = local.service_account_id
   display_name = local.service_account_name
-  project = local.management_project_id
+  project = google_project.management.project_id
+
+  depends_on = [
+    google_project_service.root_iam
+  ]
 }
