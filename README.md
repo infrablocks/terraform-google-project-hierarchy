@@ -37,6 +37,9 @@ for more details.
 
 | Name | Description |
 |------|-------------|
+|management_folder_id||
+|management_project_id||
+|management_service_account_id||
 
 ### Compatibility
 
