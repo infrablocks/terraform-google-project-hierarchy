@@ -29,6 +29,7 @@ resource "google_project_service" "root_iam" {
 
   disable_dependent_services = true
 }
+<<<<<<< Updated upstream
 
 resource "google_service_account" "service_account" {
   account_id   = local.service_account_id
@@ -39,3 +40,12 @@ resource "google_service_account" "service_account" {
     google_project_service.root_iam
   ]
 }
+||||||| Stash base
+
+resource "google_service_account" "service_account" {
+  account_id   = local.service_account_id
+  display_name = local.service_account_name
+  project = local.management_project_id
+}
+=======
+>>>>>>> Stashed changes
