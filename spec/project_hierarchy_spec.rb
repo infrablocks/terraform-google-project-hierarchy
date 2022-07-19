@@ -82,12 +82,5 @@ describe 'project hierarchy' do
 
       expect(management_project_id).to be_truthy
     end
-
-    it 'outputs the management_service_account_id' do
-      management_service_account_id = output(:project_hierarchy,
-                                             'management_service_account_id')
-
-      expect(management_service_account_id).to be_truthy
-    end
   end
 end
