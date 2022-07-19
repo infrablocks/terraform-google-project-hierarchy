@@ -3,8 +3,6 @@ locals {
   root_project_name = "${var.component}-${var.deployment_identifier}-root"
   management_project_id     = "${var.component}-${var.deployment_identifier}-mgmt"
   management_project_name   = "${var.component}-${var.deployment_identifier}-mgmt"
-  service_account_id     = "${var.component}-${var.deployment_identifier}-rsa"
-  service_account_name   = "${var.component}-${var.deployment_identifier}-rsa"
 }
 resource "google_project" "root" {
   name       = local.root_project_name
