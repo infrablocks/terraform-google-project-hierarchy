@@ -1,24 +1,12 @@
 locals {
   root_project_id   = "${var.component}-${var.deployment_identifier}-root"
   root_project_name = "${var.component}-${var.deployment_identifier}-root"
-  management_project_id     = "${var.component}-${var.deployment_identifier}-mgmt"
-  management_project_name   = "${var.component}-${var.deployment_identifier}-mgmt"
 }
+
 resource "google_project" "root" {
   name       = local.root_project_name
   project_id = local.root_project_id
   folder_id  = var.folder_id
-}
-
-resource "google_folder" "management_folder" {
-  display_name = "management"
-  parent = "folders/${var.folder_id}"
-}
-
-resource "google_project" "management" {
-  name       = local.management_project_name
-  project_id = local.management_project_id
-  folder_id  = google_folder.management_folder.folder_id
 }
 
 resource "google_project_service" "root_iam" {
@@ -26,4 +14,40 @@ resource "google_project_service" "root_iam" {
   service = "iam.googleapis.com"
 
   disable_dependent_services = true
+}
+
+resource "google_folder" "folder" {
+  count        = length(var.folders)
+  display_name = var.folders[count.index].display_name
+  parent       = "folders/${var.folder_id}"
+}
+
+locals {
+  all_folder_attributes = [
+  for folder in google_folder.folder[*] :
+  {
+    id           = folder.folder_id,
+    display_name = folder.display_name
+  }
+  ]
+}
+
+resource "google_project" "project" {
+  count = length(var.projects)
+
+  name       = "${var.component}-${var.deployment_identifier}-${var.projects[count.index].name}"
+  project_id = "${var.component}-${var.deployment_identifier}-${var.projects[count.index].name}"
+
+  folder_id = [for folder in local.all_folder_attributes : folder.id if folder.display_name == var.projects[count.index].folder][0]
+}
+
+locals {
+  all_project_attributes = [
+  for project in google_project.project[*] :
+  {
+    id        = project.project_id,
+    name      = project.name
+    folder_id = project.folder_id
+  }
+  ]
 }

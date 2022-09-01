@@ -1,7 +1,7 @@
-output "management_folder_id" {
-  value = module.project_hierarchy.management_folder_id
+output "folders" {
+  value = module.project_hierarchy.folders
 }
 
-output "management_project_id" {
-  value = module.project_hierarchy.management_project_id
+output "projects" {
+  value = module.project_hierarchy.projects
 }

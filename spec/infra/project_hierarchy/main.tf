@@ -13,4 +13,24 @@ module "project_hierarchy" {
   component             = var.component
   deployment_identifier = var.deployment_identifier
   folder_id             = var.folder_id
+
+  folders  = [
+    {
+      display_name : "management"
+    },
+    {
+      display_name : "production"
+    },
+  ]
+
+  projects = [
+    {
+      name : "mgmt"
+      folder : "management"
+    },
+    {
+      name : "prod"
+      folder : "production"
+    },
+  ]
 }
