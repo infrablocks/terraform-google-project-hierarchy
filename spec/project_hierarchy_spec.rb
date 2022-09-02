@@ -14,9 +14,12 @@ describe 'project hierarchy' do
     end
 
     it 'creates a root project' do
+      root_project_name = vars(:project_hierarchy).root_project_name
+
       found_project = resource_manager.projects.find do |i|
-        i.project_id == "#{component}-#{deployment_identifier}-root"
+        i.project_id == root_project_name
       end
+
       expect(found_project).to be_truthy
     end
 
@@ -77,16 +80,22 @@ describe 'project hierarchy' do
     end
 
     it 'creates a management project' do
+      project_name = vars(:project_hierarchy).management_project_name
+
       found_project = resource_manager.projects.find do |i|
-        i.project_id == "#{component}-#{deployment_identifier}-mgmt"
+        i.project_id == project_name
       end
+
       expect(found_project).to be_truthy
     end
 
     it 'creates a production project' do
+      project_name = vars(:project_hierarchy).production_project_name
+
       found_project = resource_manager.projects.find do |i|
-        i.project_id == "#{component}-#{deployment_identifier}-prod"
+        i.project_id == project_name
       end
+
       expect(found_project).to be_truthy
     end
 

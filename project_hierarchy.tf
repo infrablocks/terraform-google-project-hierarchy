@@ -1,11 +1,6 @@
-locals {
-  root_project_id   = "${var.component}-${var.deployment_identifier}-root"
-  root_project_name = "${var.component}-${var.deployment_identifier}-root"
-}
-
 resource "google_project" "root" {
-  name       = local.root_project_name
-  project_id = local.root_project_id
+  name       = var.root_project_name
+  project_id = var.root_project_id
   folder_id  = var.folder_id
 }
 
@@ -35,8 +30,8 @@ locals {
 resource "google_project" "project" {
   count = length(var.projects)
 
-  name       = "${var.component}-${var.deployment_identifier}-${var.projects[count.index].name}"
-  project_id = "${var.component}-${var.deployment_identifier}-${var.projects[count.index].name}"
+  name       = var.projects[count.index].name
+  project_id = var.projects[count.index].id
 
   folder_id = [for folder in local.all_folder_attributes : folder.id if folder.display_name == var.projects[count.index].folder][0]
 }
