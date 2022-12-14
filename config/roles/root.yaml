@@ -1,0 +1,11 @@
+---
+configuration_directory: "%{cwd}/spec/unit/infra/root"
+state_file: "%{cwd}/state/root.tfstate"
+vars:
+  component: "%{hiera('component')}"
+  deployment_identifier: "%{hiera('deployment_identifier')}"
+
+  folder_id: "%{hiera('folder_id')}"
+
+  root_project_name: "%{hiera('root_project_name')}"
+  root_project_id: "%{hiera('root_project_id')}"

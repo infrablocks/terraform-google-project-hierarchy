@@ -7,25 +7,25 @@ variable "root_project_name" {
 }
 
 variable "folder_id" {
-  type        = number
   description = "The ID of the folder which to create the hierarchy in. (Optional)"
+  type        = number
   default     = null
 }
 
 variable "folders" {
+  description = "The list of folders to organize projects in. Defaults to an empty list."
   type        = list(object({
     display_name = string,
   }))
-  default     = []
-  description = "The list of folders to organize projects in. Defaults to an empty list."
+  default = []
 }
 
 variable "projects" {
+  description = "The list of projects to create. Defaults to an empty list."
   type        = list(object({
     name   = string,
     id     = string,
     folder = string
   }))
-  default     = []
-  description = "The list of projects to create. Defaults to an empty list."
+  default = []
 }

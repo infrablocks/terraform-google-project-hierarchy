@@ -2,6 +2,39 @@
 region: 'eu-west-2'
 
 component: 'infrablocks-test'
+deployment_identifier: "%{hiera('seed')}"
 
-work_directory: 'build'
-configuration_directory: "%{hiera('work_directory')}/%{hiera('source_directory')}"
+gcp_credentials: "%{cwd}/config/secrets/gcp/infrablocks-testing-bootstrap.json"
+
+project_id: "infrablocks-testing"
+folder_id: "274171096401"
+
+root_project_id: "%{hiera('component')}-%{hiera('deployment_identifier')}-root"
+root_project_name: "%{hiera('component')}-%{hiera('deployment_identifier')}-root"
+
+management_project_name: "%{hiera('component')}-%{hiera('deployment_identifier')}-mgmt"
+management_project_id: "%{hiera('component')}-%{hiera('deployment_identifier')}-mgmt"
+production_project_name: "%{hiera('component')}-%{hiera('deployment_identifier')}-prod"
+production_project_id: "%{hiera('component')}-%{hiera('deployment_identifier')}-prod"
+
+folders: [
+  {
+    display_name: "management"
+  },
+  {
+    display_name: "production"
+  },
+]
+
+projects: [
+  {
+    name: "%{hiera('management_project_name')}",
+    id: "%{hiera('management_project_id')}",
+    folder: "management"
+  },
+  {
+    name: "%{hiera('production_project_name')}",
+    id: "%{hiera('production_project_id')}",
+    folder: "production"
+  }
+]

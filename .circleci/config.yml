@@ -34,14 +34,34 @@ only_main_and_dependabot: &only_main_and_dependabot
 commands:
   notify:
     steps:
-      - slack/notify:
-          event: fail
-          channel: dev
-          template: SLACK_FAILURE_NOTIFICATION
-      - slack/notify:
-          event: pass
-          channel: builds
-          template: SLACK_SUCCESS_NOTIFICATION
+      - when:
+          condition:
+            matches:
+              pattern: "^dependabot.*"
+              value: << pipeline.git.branch >>
+          steps:
+            - slack/notify:
+                event: fail
+                channel: builds-dependabot
+                template: SLACK_FAILURE_NOTIFICATION
+            - slack/notify:
+                event: pass
+                channel: builds-dependabot
+                template: SLACK_SUCCESS_NOTIFICATION
+      - when:
+          condition:
+            matches:
+              pattern: "^(?!dependabot).*"
+              value: << pipeline.git.branch >>
+          steps:
+            - slack/notify:
+                event: fail
+                channel: dev
+                template: SLACK_FAILURE_NOTIFICATION
+            - slack/notify:
+                event: pass
+                channel: builds
+                template: SLACK_SUCCESS_NOTIFICATION
   configure_tools:
     steps:
       - run: ./scripts/ci/common/install-git-crypt.sh
@@ -53,7 +73,6 @@ jobs:
   build:
     <<: *defaults
     steps:
-      - run: env
       - checkout
       - configure_tools
       - queue/until_front_of_line:
@@ -66,7 +85,11 @@ jobs:
     steps:
       - checkout
       - configure_tools
-      - run: ./scripts/ci/steps/test.sh
+      - run:
+          no_output_timeout: 30m
+          command: ./scripts/ci/steps/test.sh
+      - store_artifacts:
+          path: build/logs
       - notify
 
   prerelease:

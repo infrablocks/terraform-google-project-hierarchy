@@ -121,13 +121,13 @@ To provision the module prerequisites:
 To provision the module contents:
 
 ```bash
-./go deployment:project_hierarchy:provision[<deployment_identifier>]
+./go deployment:root:provision[<deployment_identifier>]
 ```
 
 To destroy the module contents:
 
 ```bash
-./go deployment:project_hierarchy:destroy[<deployment_identifier>]
+./go deployment:root:destroy[<deployment_identifier>]
 ```
 
 To destroy the module prerequisites:
@@ -139,19 +139,12 @@ To destroy the module prerequisites:
 Configuration parameters can be overridden via environment variables:
 
 ```bash
-DEPLOYMENT_IDENTIFIER=testing ./go
+SEED=testing ./go
 ```
 
-When a deployment identifier is provided via an environment variable, 
-infrastructure will not be destroyed at the end of test execution. This can
-be useful during development to avoid lengthy provision and destroy cycles.
-
-By default, providers will be downloaded for each terraform execution. To
-cache providers between calls:
-
-```bash
-TF_PLUGIN_CACHE_DIR="$HOME/.terraform.d/plugin-cache" ./go
-```
+When a seed is provided via an environment variable, infrastructure will not be
+destroyed at the end of test execution. This can be useful during development to
+avoid lengthy provision and destroy cycles.
 
 ### Common Tasks
 
@@ -166,6 +159,7 @@ ssh-keygen -m PEM -t rsa -b 4096 -C integration-test@example.com -N '' -f config
 #### Generating a self-signed certificate
 
 To generate a self signed certificate:
+
 ```
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
 ```
@@ -205,11 +199,11 @@ Contributing
 Bug reports and pull requests are welcome on GitHub at 
 https://github.com/infrablocks/terraform-google-project-hierarchy. 
 This project is intended to be a safe, welcoming space for collaboration, and 
-contributors are expected to adhere to 
-the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+contributors are expected to adhere to the
+[Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 License
 -------
 
-The library is available as open source under the terms of the 
+The library is available as open source under the terms of the
 [MIT License](http://opensource.org/licenses/MIT).

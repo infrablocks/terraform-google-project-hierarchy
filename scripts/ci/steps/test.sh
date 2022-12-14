@@ -20,4 +20,5 @@ set -e
 
 git crypt unlock
 
+./go test:unit
 ./go test:integration

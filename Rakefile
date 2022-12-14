@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'confidante'
 require 'git'
 require 'os'
 require 'rake_circle_ci'
@@ -13,10 +14,10 @@ require 'securerandom'
 require 'semantic'
 require 'yaml'
 
-require_relative 'lib/configuration'
+require_relative 'lib/paths'
 require_relative 'lib/version'
 
-configuration = Configuration.new
+configuration = Confidante.configuration
 
 def repo
   Git.open(Pathname.new('.'))
@@ -35,12 +36,13 @@ end
 
 task default: %i[
   test:code:fix
+  test:unit
   test:integration
 ]
 
 RakeTerraform.define_installation_tasks(
   path: File.join(Dir.pwd, 'vendor', 'terraform'),
-  version: '1.0.11'
+  version: '1.3.6'
 )
 
 namespace :encryption do
@@ -167,21 +169,27 @@ namespace :test do
     task check: [:rubocop]
 
     desc 'Attempt to automatically fix issues with the test code'
-    task fix: [:'rubocop:autocorrect']
+    task fix: [:'rubocop:autocorrect_all']
   end
 
-  RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do
-    test_configuration = configuration.for(:project_hierarchy)
+  desc 'Run module unit tests'
+  RSpec::Core::RakeTask.new(unit: ['terraform:ensure']) do |t|
+    t.pattern = 'spec/unit/**{,/*/**}/*_spec.rb'
+    t.rspec_opts = '-I spec/unit'
 
-    plugin_cache_directory =
-      "#{Paths.project_root_directory}/vendor/terraform/plugins"
+    ENV['RESOURCE_MANAGER_PROJECT'] = configuration.gcp_project_id
+    ENV['RESOURCE_MANAGER_CREDENTIALS'] = configuration.gcp_credentials
+    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = configuration.gcp_credentials
+  end
 
-    mkdir_p(plugin_cache_directory)
+  desc 'Run module integration tests'
+  RSpec::Core::RakeTask.new(integration: ['terraform:ensure']) do |t|
+    t.pattern = 'spec/integration/**{,/*/**}/*_spec.rb'
+    t.rspec_opts = '-I spec/integration'
 
-    ENV['TF_PLUGIN_CACHE_DIR'] = plugin_cache_directory
-    ENV['RESOURCE_MANAGER_PROJECT'] = test_configuration.gcp_project_id
-    ENV['RESOURCE_MANAGER_CREDENTIALS'] = test_configuration.gcp_credentials
-    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = test_configuration.gcp_credentials
+    ENV['RESOURCE_MANAGER_PROJECT'] = configuration.gcp_project_id
+    ENV['RESOURCE_MANAGER_CREDENTIALS'] = configuration.gcp_credentials
+    ENV['GOOGLE_APPLICATION_CREDENTIALS'] = configuration.gcp_credentials
   end
 end
 
@@ -189,41 +197,41 @@ namespace :deployment do
   namespace :prerequisites do
     RakeTerraform.define_command_tasks(
       configuration_name: 'prerequisites',
-      argument_names: [:deployment_identifier]
+      argument_names: [:seed]
     ) do |t, args|
       deployment_configuration =
-        configuration.for(:prerequisites, args)
+        configuration
+        .for_scope(role: :prerequisites)
+        .for_overrides(args.to_h)
 
-      t.source_directory = deployment_configuration.source_directory
-      t.work_directory = deployment_configuration.work_directory
+      t.source_directory = 'spec/unit/infra/prerequisites'
+      t.work_directory = 'build/infra'
 
       t.state_file = deployment_configuration.state_file
       t.vars = deployment_configuration.vars
     end
   end
 
-  namespace :project_hierarchy do
+  namespace :root do
     RakeTerraform.define_command_tasks(
-      configuration_name: 'project_hierarchy',
-      argument_names: [:deployment_identifier]
+      configuration_name: 'root',
+      argument_names: [:seed]
     ) do |t, args|
       deployment_configuration =
-        configuration.for(:project_hierarchy, args.to_h)
+        configuration
+        .for_scope(role: :root)
+        .for_overrides(args.to_h)
 
-      state_file = deployment_configuration.state_file
-      vars = deployment_configuration
-             .vars.to_h
+      t.source_directory = 'spec/unit/infra/root'
+      t.work_directory = 'build/infra'
 
-      environment = {
+      t.environment = {
         'GOOGLE_APPLICATION_CREDENTIALS' =>
           deployment_configuration.gcp_credentials
       }
 
-      t.source_directory = deployment_configuration.source_directory
-      t.work_directory = deployment_configuration.work_directory
-      t.environment =  environment
-      t.state_file = state_file
-      t.vars = vars
+      t.state_file = deployment_configuration.state_file
+      t.vars = deployment_configuration.vars
     end
   end
 end
@@ -237,7 +245,7 @@ namespace :version do
     puts "Bumped version to #{next_tag}."
   end
 
-  desc 'Release gem'
+  desc 'Release module'
   task :release do
     next_tag = latest_tag.release!
     repo.add_tag(next_tag.to_s)
