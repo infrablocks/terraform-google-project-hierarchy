@@ -4,9 +4,9 @@ region: 'eu-west-2'
 component: 'infrablocks-test'
 deployment_identifier: "%{hiera('seed')}"
 
+gcp_project_id: "infrablocks-testing"
 gcp_credentials: "%{cwd}/config/secrets/gcp/infrablocks-testing-bootstrap.json"
 
-project_id: "infrablocks-testing"
 folder_id: "274171096401"
 
 root_project_id: "%{hiera('component')}-%{hiera('deployment_identifier')}-root"

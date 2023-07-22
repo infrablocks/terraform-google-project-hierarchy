@@ -177,8 +177,7 @@ namespace :test do
     t.pattern = 'spec/unit/**{,/*/**}/*_spec.rb'
     t.rspec_opts = '-I spec/unit'
 
-    ENV['RESOURCE_MANAGER_PROJECT'] = configuration.gcp_project_id
-    ENV['RESOURCE_MANAGER_CREDENTIALS'] = configuration.gcp_credentials
+    ENV['GOOGLE_CLOUD_PROJECT'] = configuration.gcp_project_id
     ENV['GOOGLE_APPLICATION_CREDENTIALS'] = configuration.gcp_credentials
   end
 
@@ -187,8 +186,7 @@ namespace :test do
     t.pattern = 'spec/integration/**{,/*/**}/*_spec.rb'
     t.rspec_opts = '-I spec/integration'
 
-    ENV['RESOURCE_MANAGER_PROJECT'] = configuration.gcp_project_id
-    ENV['RESOURCE_MANAGER_CREDENTIALS'] = configuration.gcp_credentials
+    ENV['GOOGLE_CLOUD_PROJECT'] = configuration.gcp_project_id
     ENV['GOOGLE_APPLICATION_CREDENTIALS'] = configuration.gcp_credentials
   end
 end
